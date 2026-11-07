@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}سجل التغييرات — ZAS OneBrain{% endblock %}
+{% block content %}
+<h1>سجل التغييرات</h1>
+<p class="lead">كل إضافة أو تعديل بيتسجل هنا: مين عمله وإمتى. ده شرط أساسي قبل ما نسمح لأي AI يشتغل على البيانات.</p>
+<table>
+  <tr><th>الوقت</th><th>مين</th><th>العملية</th><th>النوع</th><th>التفاصيل</th></tr>
+  {% for r in rows %}
+  <tr><td>{{ r.at.strftime('%Y-%m-%d %H:%M') }}</td><td>{{ r.actor }}</td><td>{{ r.action }}</td><td>{{ r.entity }}</td><td>{{ r.details }}</td></tr>
+  {% else %}<tr><td colspan="5">لا يوجد</td></tr>{% endfor %}
+</table>
+{% endblock %}

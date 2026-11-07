@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}العملاء — ZAS OneBrain{% endblock %}
+{% block content %}
+<h1>العملاء</h1>
+<div class="grid2">
+<form method="post" class="box">
+  <h2>إضافة عميل</h2>
+  <label>اسم العميل *<input name="name" value="{{ form.name }}" required></label>
+  <label>الموبايل<input name="phone" value="{{ form.phone }}" inputmode="tel"></label>
+  <label>الإيميل<input name="email" value="{{ form.email }}" type="email"></label>
+  <label>جاي منين؟ (مصدر العميل)<input name="source" value="{{ form.source }}" placeholder="Facebook، ترشيح، الموقع..."></label>
+  <label>ملاحظات<textarea name="notes">{{ form.notes }}</textarea></label>
+  <button>حفظ</button>
+</form>
+<div>
+<table>
+  <tr><th>الكود</th><th>الاسم</th><th>الموبايل</th><th>المصدر</th></tr>
+  {% for c in rows %}
+  <tr><td><code>{{ c.code }}</code></td><td>{{ c.name }} {% if c.is_demo %}<span class="tag">تجريبي</span>{% endif %}</td>
+      <td>{{ c.phone or '—' }}</td><td>{{ c.source or '—' }}</td></tr>
+  {% else %}<tr><td colspan="4">لا يوجد عملاء</td></tr>{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}

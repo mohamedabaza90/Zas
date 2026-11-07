@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}الموظفين — ZAS OneBrain{% endblock %}
+{% block content %}
+<h1>الموظفين</h1>
+<div class="grid2">
+<form method="post" class="box">
+  <h2>إضافة موظف</h2>
+  <label>الاسم *<input name="name" value="{{ form.name }}" required></label>
+  <label>الوظيفة / الإدارة *
+    <select name="role" required>
+      <option value="">— اختار —</option>
+      {% for r in Role %}<option value="{{ r.value }}" {{ 'selected' if form.role == r.value }}>{{ ROLE_LABELS[r] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>الموبايل<input name="phone" value="{{ form.phone }}" inputmode="tel"></label>
+  <button>حفظ</button>
+</form>
+<div>
+<table>
+  <tr><th>الكود</th><th>الاسم</th><th>الإدارة</th><th>الموبايل</th></tr>
+  {% for p in rows %}
+  <tr><td><code>{{ p.code }}</code></td><td>{{ p.name }} {% if p.is_demo %}<span class="tag">تجريبي</span>{% endif %}</td>
+      <td>{{ ROLE_LABELS[p.role] }}</td><td>{{ p.phone or '—' }}</td></tr>
+  {% else %}<tr><td colspan="4">لا يوجد موظفين</td></tr>{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}

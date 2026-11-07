@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ company.name }} — لوحة الأساس</h1>
+<p class="lead">أدخل المعلومة مرة واحدة ← كل قسم يستفيد منها. كل مشروع له <b>رقم موحد</b> بيربط العميل والمعاينة والتسعير والتنفيذ والحسابات.</p>
+
+<section class="cards">
+  <div class="card"><div class="num">{{ counts.projects }}</div><div>مشروع</div></div>
+  <div class="card"><div class="num">{{ counts.active }}</div><div>مشروع بعد التعاقد</div></div>
+  <div class="card"><div class="num">{{ counts.clients }}</div><div>عميل</div></div>
+  <div class="card"><div class="num">{{ counts.people }}</div><div>موظف</div></div>
+</section>
+
+<h2>رحلة المشروع (10 مراحل)</h2>
+<div class="journey">
+  {% for st in STAGE_ORDER %}
+  <div class="step {{ 'pre' if st in PRE_CONTRACT else 'post' }}">
+    <div class="n">{{ by_stage.get(st, 0) }}</div>
+    <div class="lbl">{{ loop.index }}. {{ STAGE_LABELS[st] }}</div>
+  </div>
+  {% endfor %}
+</div>
+<p class="hint">الأزرق = قبل التعاقد (استفسار، معاينة، تسعير) — الأخضر = بعد التعاقد (تنفيذ، مشتريات، مستخلصات).</p>
+
+<h2>آخر التغييرات</h2>
+<table>
+  <tr><th>الوقت</th><th>مين</th><th>إيه اللي حصل</th></tr>
+  {% for r in recent %}
+  <tr><td>{{ r.at.strftime('%Y-%m-%d %H:%M') }}</td><td>{{ r.actor }}</td><td>{{ r.details }}</td></tr>
+  {% else %}<tr><td colspan="3">لا يوجد</td></tr>{% endfor %}
+</table>
+{% endblock %}

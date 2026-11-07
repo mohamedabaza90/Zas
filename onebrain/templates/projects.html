@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}المشروعات — ZAS OneBrain{% endblock %}
+{% block content %}
+<h1>المشروعات</h1>
+<div class="grid2">
+<form method="post" class="box">
+  <h2>فتح مشروع جديد</h2>
+  <label>اسم المشروع *<input name="name" value="{{ form.name }}" required placeholder="مثال: تشطيب فيلا — التجمع"></label>
+  <label>العميل *
+    <select name="client_id" required>
+      <option value="">— اختار —</option>
+      {% for c in clients.values() %}<option value="{{ c.id }}" {{ 'selected' if form.client_id == c.id|string }}>{{ c.code }} — {{ c.name }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>نوع الوحدة *
+    <select name="unit_type" required>
+      <option value="">— اختار —</option>
+      {% for u in UnitType %}<option value="{{ u.value }}" {{ 'selected' if form.unit_type == u.value }}>{{ UNIT_LABELS[u] }}</option>{% endfor %}
+    </select>
+  </label>
+  <div class="row">
+    <label>المنطقة<input name="location" value="{{ form.location }}"></label>
+    <label>المساحة (م²)<input name="area_m2" value="{{ form.area_m2 }}" inputmode="decimal"></label>
+  </div>
+  <label>مدير المشروع
+    <select name="manager_id">
+      <option value="">— لاحقًا —</option>
+      {% for m in people.values() %}<option value="{{ m.id }}" {{ 'selected' if form.manager_id == m.id|string }}>{{ m.name }} ({{ ROLE_LABELS[m.role] }})</option>{% endfor %}
+    </select>
+  </label>
+  <label>نوع التعاقد *
+    <select name="contract_model">
+      {% for cm in ContractModel %}<option value="{{ cm.value }}" {{ 'selected' if form.contract_model == cm.value }}>{{ CONTRACT_LABELS[cm] }}</option>{% endfor %}
+    </select>
+  </label>
+  <div class="row">
+    <label>نسبة الإشراف %<input name="fee_percent" value="{{ form.fee_percent }}" inputmode="decimal" placeholder="15"></label>
+    <label>أو أتعاب ثابتة (جنيه)<input name="fixed_fee_amount" value="{{ form.fixed_fee_amount }}" inputmode="decimal"></label>
+  </div>
+  <label>تاريخ البداية<input type="date" name="start_date" value="{{ form.start_date }}"></label>
+  <button>فتح المشروع</button>
+  <p class="hint">النظام بيدي المشروع رقم موحد تلقائيًا (مثال ZAS-2026-001).</p>
+</form>
+<div>
+<table>
+  <tr><th>رقم المشروع</th><th>الاسم</th><th>العميل</th><th>المرحلة</th><th>التعاقد</th></tr>
+  {% for p in rows %}
+  <tr>
+    <td><a href="/projects/{{ p.id }}"><code>{{ p.code }}</code></a></td>
+    <td><a href="/projects/{{ p.id }}">{{ p.name }}</a> {% if p.is_demo %}<span class="tag">تجريبي</span>{% endif %}</td>
+    <td>{{ clients[p.client_id].name if p.client_id in clients else '—' }}</td>
+    <td><span class="pill {{ 'pre' if p.stage in PRE_CONTRACT else 'post' }}">{{ STAGE_LABELS[p.stage] }}</span></td>
+    <td>{% if p.contract_model.value == 'cost_plus_fee' %}{{ "%g"|format(p.fee_percent) }}%{% else %}{{ '{:,.0f}'.format(p.fixed_fee_amount) }} ج{% endif %}</td>
+  </tr>
+  {% else %}<tr><td colspan="5">لا يوجد مشروعات</td></tr>{% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}

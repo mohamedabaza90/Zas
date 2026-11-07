@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ p.code }} — ZAS OneBrain{% endblock %}
+{% block content %}
+<h1><code>{{ p.code }}</code> {{ p.name }} {% if p.is_demo %}<span class="tag">تجريبي</span>{% endif %}</h1>
+
+<div class="journey small">
+  {% for st in STAGE_ORDER %}
+  <div class="step {{ 'pre' if st in PRE_CONTRACT else 'post' }} {{ 'current' if st == p.stage }}">
+    <div class="lbl">{{ loop.index }}. {{ STAGE_LABELS[st] }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="grid2">
+<div class="box">
+  <h2>بيانات المشروع</h2>
+  <dl>
+    <dt>العميل</dt><dd><code>{{ client.code }}</code> {{ client.name }} — {{ client.phone or '' }}</dd>
+    <dt>نوع الوحدة</dt><dd>{{ UNIT_LABELS[p.unit_type] }}{% if p.area_m2 %} — {{ p.area_m2|round(0)|int }} م²{% endif %}</dd>
+    <dt>المنطقة</dt><dd>{{ p.location or '—' }}</dd>
+    <dt>مدير المشروع</dt><dd>{{ manager.name if manager else 'لم يحدد' }}</dd>
+    <dt>نوع التعاقد</dt><dd>{{ CONTRACT_LABELS[p.contract_model] }} —
+      {% if p.contract_model.value == 'cost_plus_fee' %}{{ "%g"|format(p.fee_percent) }}% من تكلفة التنفيذ{% else %}{{ '{:,.0f}'.format(p.fixed_fee_amount) }} جنيه{% endif %}</dd>
+    <dt>تاريخ البداية</dt><dd>{{ p.start_date or '—' }}</dd>
+  </dl>
+  <p class="hint">تنبيه مالي: فلوس العميل المخصصة للصرف على المشروع <b>مش</b> إيراد للشركة — الإيراد هو الأتعاب فقط. (هيتفصل في قسم الحسابات.)</p>
+</div>
+<div class="box">
+  <h2>نقل المشروع لمرحلة</h2>
+  <form method="post" action="/projects/{{ p.id }}/stage" class="inline">
+    <select name="stage">
+      {% for st in STAGE_ORDER %}<option value="{{ st.value }}" {{ 'selected' if st == p.stage }}>{{ STAGE_LABELS[st] }}</option>{% endfor %}
+    </select>
+    <button>تحديث</button>
+  </form>
+  <h2>تاريخ المشروع</h2>
+  <ul class="timeline">
+    {% for h in history %}<li><b>{{ h.at.strftime('%Y-%m-%d %H:%M') }}</b> — {{ h.actor }}: {{ h.details }}</li>{% endfor %}
+  </ul>
+</div>
+</div>
+{% endblock %}
